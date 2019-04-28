@@ -1,0 +1,57 @@
+* {
+	font-family: Cambria;
+}
+
+.cart-badge {
+	position: relative;
+	top: -12px;
+	left: -5px;
+}
+
+.myslideimage {
+	max-height: 350px;
+	min-height: 350px;
+	height: 350px;
+}
+
+.productimage {
+	height: 150px;
+	width: 150px;
+}
+
+.myiconimage {
+	max-height: 100px;
+	min-height: 100px;
+	height: 100px;
+	width: 120px;
+}
+
+.myimageicontext {
+	position: relative;
+	top: 10px;
+	font-size: 45px;
+}
+.sidebar{
+	position:absolute;
+	width:270px;
+	z-index:10000;
+	transition:1s;
+}
+
+.hidesidebar{
+	margin-left:-270px;
+}
+.mymenu{
+	color:white;
+	margin-right:20px;
+}
+
+
+
+
+
+
+
+
+
+
