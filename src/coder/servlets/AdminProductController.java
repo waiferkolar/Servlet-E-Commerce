@@ -18,13 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
 import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.FileItemFactory;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.tomcat.util.http.fileupload.disk.DiskFileItemFactory;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletRequestContext;
 
 @WebServlet("/AdminProductController")
-@MultipartConfig
+//@MultipartConfig
 public class AdminProductController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private DataSource ds;
@@ -55,12 +56,17 @@ public class AdminProductController extends HttpServlet {
 			String price = request.getParameter("price");
 			String description = request.getParameter("description");
 
-			pw.write("Cat Id : " + cat_id + "\nName : " + name + "\nPrice : " + price + "\nDescription " + description);
+			pw.write("Cat Id : " + cat_id + "\nName : " + name + "\nPrice : " + price + "\nDescription " + description
+					+ "\n");
 
 			if (ServletFileUpload.isMultipartContent(request)) {
 				try {
-					List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory())
-							.parseRequest(new ServletRequestContext(request));
+
+					FileItemFactory factory = new DiskFileItemFactory();
+					ServletFileUpload upload = new ServletFileUpload(factory);
+					List<FileItem> multiparts = upload.parseRequest(new ServletRequestContext(request));
+
+					pw.write("Multipart Count " + multiparts);
 
 					for (FileItem item : multiparts) {
 						if (!item.isFormField()) {
@@ -68,8 +74,6 @@ public class AdminProductController extends HttpServlet {
 							item.write(new File(filePath + File.separator + name1));
 						}
 					}
-
-					pw.write("File Already Save");
 
 				} catch (FileUploadException e) {
 					e.printStackTrace();
