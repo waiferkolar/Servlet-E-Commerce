@@ -86,6 +86,84 @@ public class AdminProductController extends HttpServlet {
 			pw.write("No Data");
 		}
 	}
+	protected void doGet2(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		String cat_id = "";
+		String name = "";
+		String price = "";
+		String description = "";
+
+		String filename = "";
+		String filePath = "/Users/waiferkolar/Documents/Eclipse/EE-Project/MyShop/WebContent/assets/uploads";
+		if (ServletFileUpload.isMultipartContent(request)) {
+			try {
+
+				FileItemFactory factory = new DiskFileItemFactory();
+				ServletFileUpload upload = new ServletFileUpload(factory);
+				List<FileItem> multiparts = upload.parseRequest(new ServletRequestContext(request));
+
+				for (FileItem item : multiparts) {
+					if (!item.isFormField()) {
+						filename = item.getName();
+						String name1 = new File(item.getName()).getName();
+						item.write(new File(filePath + File.separator + name1));
+					} else {
+						switch (item.getFieldName()) {
+						case "category":
+							cat_id = item.getString();
+							break;
+						case "name":
+							name = item.getString();
+							break;
+						case "price":
+							price = item.getString();
+							break;
+						case "description":
+							description = item.getString();
+							break;
+						}
+					}
+				}
+
+			} catch (FileUploadException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("No Data");
+		}
+		response.getWriter().write("Cat Id : " + cat_id + " Name  : " + name + " Price : " + price + " Description :  "
+				+ description + " File name :  " + filename);
+		int catId = Integer.parseInt(cat_id);
+		int pricy = Integer.parseInt(price);
+		try {
+			Connection con = ds.getConnection();
+			String query = "INSERT INTO products (cat_id,name,price,image,description) VALUES (?,?,?,?,?)";
+			PreparedStatement ps = con.prepareStatement(query);
+
+			ps.setInt(1, catId);
+			ps.setString(2, name);
+			ps.setInt(3, pricy);
+			ps.setString(4, filename);
+			ps.setString(5, description);
+
+			int ret = ps.executeUpdate();
+
+			if (ret == 1) {
+				request.setAttribute("msg_success", "We have uploaded new Product Successfully!");
+				request.getRequestDispatcher("./home.jsp").forward(request, response);
+			} else {
+				request.setAttribute("msg_error", "Three is an error on uploading!");
+				request.getRequestDispatcher("./create_product.jsp").forward(request, response);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
